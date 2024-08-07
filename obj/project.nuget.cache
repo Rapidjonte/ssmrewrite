@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "/BnjXeL+p6g=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Rapid\\source\\repos\\ssmrewrite\\ssmrewrite.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Rapid\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
+    "C:\\Users\\Rapid\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

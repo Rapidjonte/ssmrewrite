@@ -8,8 +8,8 @@
 
     internal class Program
     {
-        public static readonly int screenWidth = Raylib.GetScreenWidth();
-        public static readonly int screenHeight = Raylib.GetScreenHeight();
+        public static int screenWidth = 0;
+        public static int screenHeight = 0;
 
         public static Stopwatch songTime = new Stopwatch();
         public static double skippedSeconds = 0; 
@@ -20,6 +20,8 @@
             Raylib.SetTargetFPS(Settings.fps);
             Methods.SetWindowMode(Settings.windowMode);
             Raylib.InitAudioDevice();
+            screenWidth = Raylib.GetScreenWidth();
+            screenHeight = Raylib.GetScreenHeight();
 
             PlayMap(new SSPMap(@"assets\map.sspm"));
 
@@ -39,7 +41,7 @@
 
             Camera3D camera = new Camera3D
             {
-                Position = new Vector3(0.0f, 0.0f, -3.0f),
+                Position = new Vector3(0.0f, 0.0f, -Settings.cameraDistance),
                 Target = new Vector3(0, 0.0f, 0.0f),
                 Up = new Vector3(0.0f, 1.0f, 0.0f),
                 FovY = Settings.fov,
@@ -65,6 +67,11 @@
 
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.Black);
+
+                Vector2 mousePosition = Raylib.GetMousePosition();
+                camera.Position = new Vector3(-(mousePosition.X - screenWidth / 2) * Settings.cameraParallax/10000, -(mousePosition.Y - screenHeight / 2) * Settings.cameraParallax / 10000, -Settings.cameraDistance);
+                camera.Target = new Vector3(camera.Position.X, camera.Position.Y, 0);
+                Raylib.DrawText(camera.Position.Y.ToString(), 200, 100, 100, Color.White);
 
                 Raylib.BeginMode3D(camera);
                 for (int i = 0; i < renderedNotes.Count; i++) 

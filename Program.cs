@@ -32,8 +32,8 @@
         static void PlayMap(IBeatmapSet map)
         {
             Sound song = Raylib.LoadSoundFromWave(Raylib.LoadWaveFromMemory(".mp3", map.AudioData));
-            Model model = Settings.model; 
-            Raylib.PlaySound(song);
+            Model model = Settings.model;
+            Raylib.PlayAudioStream(song.Stream);
 
             List<Note> renderedNotes = new List<Note>();
             int noteIndex = 0;
@@ -51,7 +51,9 @@
             songTime.Start();
             while (!Raylib.WindowShouldClose())
             {
-                while (noteIndex < map.Difficulties[0].Notes.Length && (float)(songTime.Elapsed.TotalSeconds+skippedSeconds) + Settings.sd/Settings.ar > map.Difficulties[0].Notes[noteIndex].Time)
+                Raylib.SetAudioStreamPitch(song.Stream, (float)(Settings.modifier / 100));
+
+                while (noteIndex < map.Difficulties[0].Notes.Length && (float)((songTime.Elapsed.TotalSeconds + skippedSeconds) * (Settings.modifier / 100)) + Settings.sd/Settings.ar > map.Difficulties[0].Notes[noteIndex].Time)
                 {
                     Note toAdd = map.Difficulties[0].Notes[noteIndex];
                     toAdd.Color = Settings.colors[colorIndex];
@@ -71,19 +73,18 @@
                 Vector2 mousePosition = Raylib.GetMousePosition();
                 camera.Position = new Vector3(-(mousePosition.X - screenWidth / 2) * Settings.cameraParallax/10000, -(mousePosition.Y - screenHeight / 2) * Settings.cameraParallax / 10000, -Settings.cameraDistance);
                 camera.Target = new Vector3(camera.Position.X, camera.Position.Y, 0);
-                Raylib.DrawText(camera.Position.Y.ToString(), 200, 100, 100, Color.White);
 
                 Raylib.BeginMode3D(camera);
                 for (int i = 0; i < renderedNotes.Count; i++) 
                 {
-                    float noteZ = (renderedNotes[i].Time - (float)(songTime.Elapsed.TotalSeconds+skippedSeconds)) * Settings.ar;
+                    float noteZ = (renderedNotes[i].Time - (float)((songTime.Elapsed.TotalSeconds + skippedSeconds) * (Settings.modifier / 100))) * Settings.ar;
                     if (noteZ < 0)
                     {
                         renderedNotes.RemoveAt(i);
                         i--;
                         continue;
                     }
-                    
+
                     Raylib.DrawModel(model, new Vector3(renderedNotes[i].X, renderedNotes[i].Y, noteZ), Settings.noteScale, renderedNotes[i].Color);
                 }
                 Raylib.EndMode3D();

@@ -22,5 +22,7 @@ namespace ssm
         public static Model model = Raylib.LoadModel(@"assets\model.obj");
         public static Color[] colors = [Color.Violet, Color.Blue, Color.Green, Color.SkyBlue];
         public static float noteScale = 0.59f;
+
+        public static double modifier = 100;
     }
 }

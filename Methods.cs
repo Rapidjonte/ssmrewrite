@@ -26,6 +26,40 @@ namespace ssm
                     Log.Error($"ERROR: windowMode \"{Settings.windowMode}\" is unrecognized, resorting to windowed.."); break;
             }
         }
+
+        public static Color HexToColor(string hex)
+        {
+            hex = hex.TrimStart('#');
+
+            byte alpha = 255;
+            if (hex.Length == 8)
+            {
+                alpha = Convert.ToByte(hex.Substring(0, 2), 16);
+                hex = hex.Substring(2);
+            }
+            else if (hex.Length != 6)
+            {
+                throw new ArgumentException("invalid hex color code >:(");
+            }
+
+            byte red = Convert.ToByte(hex.Substring(0, 2), 16);
+            byte green = Convert.ToByte(hex.Substring(2, 2), 16);
+            byte blue = Convert.ToByte(hex.Substring(4, 2), 16);
+
+            return new Color(red, green, blue, alpha);
+        }
+
+        public static Color[] GetColorsFromPath(string path)
+        {
+            string[] file = File.ReadAllLines(path);
+
+            Color[] colors = new Color[file.Length];
+            for (int i = 0; i < file.Length; i++)
+            {
+                colors[i] = HexToColor(file[i]);
+            }
+            return colors;
+        }
     }
 
     public class Log

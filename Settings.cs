@@ -20,8 +20,9 @@ namespace ssm
         public static float ar = 35;
 
         public static Model model = Raylib.LoadModel(@"assets\model.obj");
-        public static Color[] colors = [Color.Violet, Color.Blue, Color.Green, Color.SkyBlue];
         public static float noteScale = 0.59f;
+
+        public static Color[] colors = Methods.GetColorsFromPath(@"assets\colors.txt");
 
         public static double modifier = 100;
     }

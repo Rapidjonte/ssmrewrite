@@ -1,9 +1,5 @@
 ﻿using Raylib_cs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace ssm
 {
@@ -59,6 +55,11 @@ namespace ssm
                 colors[i] = HexToColor(file[i]);
             }
             return colors;
+        }
+
+        public static Vector2 Parallax(Vector2 mousePosition, Vector2 center)
+        {
+            return new Vector2(-(mousePosition.X - center.X) * Settings.cameraParallax / 10000, -(mousePosition.Y - center.Y) * Settings.cameraParallax / 10000);
         }
     }
 

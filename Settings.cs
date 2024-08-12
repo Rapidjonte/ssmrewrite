@@ -1,14 +1,12 @@
-﻿using Raylib_cs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ssm
+﻿namespace ssm
 {
+    using Raylib_cs;
+    using System.Diagnostics;
+    using System.Numerics;
+
     internal class Settings
     {
+        // to be changed ingame
         public static string windowMode = "Borderless";
         public static int fps = 165;
 
@@ -21,9 +19,15 @@ namespace ssm
 
         public static Model model = Raylib.LoadModel(@"assets\model.obj");
         public static float noteScale = 0.59f;
-
         public static Color[] colors = Methods.GetColorsFromPath(@"assets\colors.txt");
 
         public static double modifier = 100;
+
+        // to not be changed ingame
+        public static Texture2D border = Raylib.LoadTexture(@"assets\border.png");
+
+        public static string songFileType = ".mp3";
+
+        public static bool debugCam = false;
     }
 }

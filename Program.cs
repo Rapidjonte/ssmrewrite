@@ -1,10 +1,9 @@
 ﻿namespace ssm
 {
     using Raylib_cs;
+    using System;
     using System.Diagnostics;
     using System.Numerics;
-    using System.Reflection.Metadata;
-    using static System.Formats.Asn1.AsnWriter;
 
     internal class Program
     {
@@ -31,14 +30,18 @@
 
         static void PlayMap(IBeatmapSet map)
         {
-            Sound song = Raylib.LoadSoundFromWave(Raylib.LoadWaveFromMemory(".mp3", map.AudioData));
+            Sound song = Raylib.LoadSoundFromWave(Raylib.LoadWaveFromMemory(Settings.songFileType, map.AudioData));
+
             Model model = Settings.model;
-            Raylib.PlayAudioStream(song.Stream);
+            Texture2D border = Settings.border;
+
+            Vector2 center = new Vector2(screenWidth / 2, screenWidth / 2);
 
             List<Note> renderedNotes = new List<Note>();
             int noteIndex = 0;
             int colorIndex = 0;
 
+            Raylib.DisableCursor();
             Camera3D camera = new Camera3D
             {
                 Position = new Vector3(0.0f, 0.0f, -Settings.cameraDistance),
@@ -48,10 +51,11 @@
                 Projection = CameraProjection.Perspective
             };
 
+            Raylib.PlaySound(song);
             songTime.Start();
-            while (!Raylib.WindowShouldClose())
+            while (!Raylib.WindowShouldClose()) // ------ LOOP ------
             {
-                Raylib.SetAudioStreamPitch(song.Stream, (float)(Settings.modifier / 100));
+                Raylib.SetSoundPitch(song, (float)(Settings.modifier / 100));
 
                 while (noteIndex < map.Difficulties[0].Notes.Length && (float)((songTime.Elapsed.TotalSeconds + skippedSeconds) * (Settings.modifier / 100)) + Settings.sd/Settings.ar > map.Difficulties[0].Notes[noteIndex].Time)
                 {
@@ -71,8 +75,11 @@
                 Raylib.ClearBackground(Color.Black);
 
                 Vector2 mousePosition = Raylib.GetMousePosition();
-                camera.Position = new Vector3(-(mousePosition.X - screenWidth / 2) * Settings.cameraParallax/10000, -(mousePosition.Y - screenHeight / 2) * Settings.cameraParallax / 10000, -Settings.cameraDistance);
-                camera.Target = new Vector3(camera.Position.X, camera.Position.Y, 0);
+
+                if (Settings.debugCam)
+                {
+                    Raylib.UpdateCamera(ref camera, CameraMode.Free);
+                }
 
                 Raylib.BeginMode3D(camera);
                 for (int i = 0; i < renderedNotes.Count; i++) 
@@ -85,8 +92,9 @@
                         continue;
                     }
 
-                    Raylib.DrawModel(model, new Vector3(renderedNotes[i].X, renderedNotes[i].Y, noteZ), Settings.noteScale, renderedNotes[i].Color);
+                    Raylib.DrawModel(model, new Vector3(new Vector2(renderedNotes[i].X, renderedNotes[i].Y)+-Methods.Parallax(mousePosition, center), noteZ), Settings.noteScale, renderedNotes[i].Color);
                 }
+                // Raylib.DrawTextureEx(border, center, 0, 0.001f, Color.White); work in progress
                 Raylib.EndMode3D();
 
                 Raylib.DrawText("FPS: " + Raylib.GetFPS(), 0, 0, 100, Color.White);
@@ -96,6 +104,9 @@
 
             Raylib.UnloadSound(song);
             Raylib.UnloadModel(model);
+            Raylib.UnloadTexture(border);
+
+            Raylib.EnableCursor();
         }
     }
 }
